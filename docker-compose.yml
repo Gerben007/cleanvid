@@ -14,8 +14,7 @@ services:
       - /mnt/usb-media1:/data/usb1
     entrypoint: ["python", "-m", "cleanvid.service"]
     environment:
-      CLEANVID_INPUT_DIR: /data/in
-      CLEANVID_OUTPUT_DIR: /data/out
+      CLEANVID_WATCH_DIRS: /data/usb1,/data/usb2
       CLEANVID_PROCESSED_DIR: /data/processed
       CLEANVID_POLL_INTERVAL: '10'
       CLEANVID_PRESERVE_INPUT: 'true'
