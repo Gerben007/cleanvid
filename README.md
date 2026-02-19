@@ -101,6 +101,15 @@ options:
 
 Alternately, a [Dockerfile](./docker/Dockerfile) is provided to allow you to run cleanvid in Docker. You can build the `oci.guero.org/cleanvid:latest` Docker image with [`build_docker.sh`](./docker/build_docker.sh), then run [`cleanvid-docker.sh`](./docker/cleanvid-docker.sh) inside the directory where your video/subtitle files are located.
 
+#### Persistent configuration
+
+The provided `docker-compose.yml` ensures that:
+- A default `swears.txt` is always mounted and used (edit `docker/swears.txt` to customize your word list)
+- All environment variables for folder watching and output are set persistently
+- You do not need to manually set variables in Portainer after redeploying or updating the image
+
+If you want to change the bad-words list, just edit `docker/swears.txt` and restart the container.
+
 ### Running as an automated service (Docker Compose)
 
 This repository includes a `docker-compose.yml` that builds the image and runs a simple folder-watcher service. The service watches `/data/in` for new video files, processes them, writes outputs to `/data/out`, and moves processed inputs to `/data/processed`.

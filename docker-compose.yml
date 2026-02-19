@@ -19,3 +19,4 @@ services:
       CLEANVID_POLL_INTERVAL: '10'
       CLEANVID_PRESERVE_INPUT: 'true'
       CLEANVID_WRITE_OUTPUT_NEXT_TO_INPUT: 'true'
+      CLEANVID_SWEARS_FILE: /data/swears.txt
