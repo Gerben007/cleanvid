@@ -101,6 +101,27 @@ options:
 
 Alternately, a [Dockerfile](./docker/Dockerfile) is provided to allow you to run cleanvid in Docker. You can build the `oci.guero.org/cleanvid:latest` Docker image with [`build_docker.sh`](./docker/build_docker.sh), then run [`cleanvid-docker.sh`](./docker/cleanvid-docker.sh) inside the directory where your video/subtitle files are located.
 
+### Running as an automated service (Docker Compose)
+
+This repository includes a `docker-compose.yml` that builds the image and runs a simple folder-watcher service. The service watches `/data/in` for new video files, processes them, writes outputs to `/data/out`, and moves processed inputs to `/data/processed`.
+
+Create a local `data` directory and the expected subfolders, then start the service:
+
+```bash
+mkdir -p data/in data/out data/processed
+docker compose up -d --build
+```
+
+You can configure behaviour with environment variables in `docker-compose.yml` or by overriding them at runtime:
+
+- `CLEANVID_INPUT_DIR` (default `/data/in`)
+- `CLEANVID_OUTPUT_DIR` (default `/data/out`)
+- `CLEANVID_PROCESSED_DIR` (default `/data/processed`)
+- `CLEANVID_POLL_INTERVAL` (seconds, default `10`)
+- `CLEANVID_PRESERVE_INPUT` (true/false, default `false`)
+
+Processed videos will be saved with a `_clean` suffix in the output directory.
+
 ## Contributing
 
 If you'd like to help improve cleanvid, pull requests will be welcomed!

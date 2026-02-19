@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  cleanvid:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: cleanvid:local
+    restart: always
+    volumes:
+      - ./data:/data
+      - ./docker/swears.txt:/data/swears.txt:ro
+      - /mnt/usb-media2:/data/usb2
+      - /mnt/usb-media1:/data/usb1
+    entrypoint: ["python", "-m", "cleanvid.service"]
+    environment:
+      CLEANVID_INPUT_DIR: /data/in
+      CLEANVID_OUTPUT_DIR: /data/out
+      CLEANVID_PROCESSED_DIR: /data/processed
+      CLEANVID_POLL_INTERVAL: '10'
+      CLEANVID_PRESERVE_INPUT: 'true'
+      CLEANVID_WRITE_OUTPUT_NEXT_TO_INPUT: 'true'
