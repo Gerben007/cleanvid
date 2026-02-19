@@ -44,6 +44,7 @@ def find_videos(path):
 			continue
 		full = os.path.join(path, entry)
 		if os.path.isfile(full) and entry.lower().endswith(VIDEO_EXTS):
+			log.info(f"Found video: {full}")
 			yield full
 
 
@@ -55,6 +56,7 @@ def find_subs(path):
 			continue
 		full = os.path.join(path, entry)
 		if os.path.isfile(full) and entry.lower().endswith('.srt'):
+			log.info(f"Found subtitle: {full}")
 			yield full
 
 
@@ -151,22 +153,32 @@ def main():
 		try:
 			video_map = {}
 			subs_map = {}
+			def filekey(path):
+				# Use full filename minus extension for pairing
+				return os.path.splitext(os.path.basename(path))[0]
 			for d in watch_dirs:
 				for v in find_videos(d):
-					video_map[os.path.splitext(os.path.basename(v))[0]] = v
+					k = filekey(v)
+					log.info(f"Indexing video for pairing: {k} -> {v}")
+					video_map[k] = v
 				for s in find_subs(d):
-					subs_map[os.path.splitext(os.path.basename(s))[0]] = s
+					k = filekey(s)
+					log.info(f"Indexing subtitle for pairing: {k} -> {s}")
+					subs_map[k] = s
 
 			for base, vpath in list(video_map.items()):
 				srt = subs_map.get(base)
+				log.info(f"Pairing attempt: video={vpath} subtitle={srt}")
 
 				try:
 					s1 = os.path.getsize(vpath)
 					time.sleep(1)
 					s2 = os.path.getsize(vpath)
 				except OSError:
+					log.info(f"Skipping {vpath}: could not stat file (may have been removed)")
 					continue
 				if s1 != s2:
+					log.info(f"Skipping {vpath}: file size changed (still being written)")
 					continue
 
 				key = os.path.abspath(vpath)
@@ -185,6 +197,7 @@ def main():
 							needs = True
 
 				if not needs:
+					log.info(f"Skipping {vpath}: already processed and unchanged.")
 					continue
 
 				ok = process(vpath, srt, output_dir, processed_dir, swears_file, preserve_input, write_next_to_input)
